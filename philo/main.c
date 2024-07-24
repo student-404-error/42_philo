@@ -6,7 +6,7 @@
 /*   By: seong-ki <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 22:06:17 by seong-ki          #+#    #+#             */
-/*   Updated: 2024/07/24 21:01:28 by seong-ki         ###   ########.fr       */
+/*   Updated: 2024/07/24 21:10:29 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,6 @@ int	ft_errno(int errno, char *loc)
 	return (FAILURE);
 }
 
-void	ft_destroy_mutex(int num_of_philo, pthread_mutex_t *fork)
-{
-	int	i;
-
-	i = 0;
-	while (i < num_of_philo)
-	{
-		pthread_mutex_destroy(&fork[i]);
-		i++;
-	}
-}
-
 int	main(int ac, char *av[])
 {
 	t_arg			arg;
@@ -72,13 +60,7 @@ int	main(int ac, char *av[])
 	errno = ft_init_philo(arg, &philo, fork);
 	if (errno)
 		return (ft_errno(errno, "ft_init_philo"));
-	int i = 0;
-	while (i < arg.num_of_philo)
-	{
-		pthread_join(philo[i].thread, NULL);
-		i++;
-	}
-	ft_destroy_mutex(arg.num_of_philo, fork);
-	free(fork);
-	free(philo);
+	ft_join_thread(arg.num_of_philo, philo);
+	ft_free_thread_mutex(fork, philo);
+	return (SUCCESS);
 }
