@@ -6,7 +6,7 @@
 /*   By: seong-ki <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 20:40:39 by seong-ki          #+#    #+#             */
-/*   Updated: 2024/07/24 19:46:33 by seong-ki         ###   ########.fr       */
+/*   Updated: 2024/07/24 21:01:11 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <sys/time.h>
 # include <stdlib.h>
+# include <unistd.h>
 
 # define TRUE 1
 # define FALSE 0
@@ -53,5 +54,5 @@ int		ft_init_fork(t_arg *arg, pthread_mutex_t **fork);
 int		ft_init_philo(t_arg arg, t_philo **philo, pthread_mutex_t *forks);
 // utils functions
 long	ft_atoi(const char *str);
-
+void	*philo_routine(void *arg);
 #endif
