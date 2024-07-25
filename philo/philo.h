@@ -6,7 +6,7 @@
 /*   By: seong-ki <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 20:40:39 by seong-ki          #+#    #+#             */
-/*   Updated: 2024/07/24 21:12:50 by seong-ki         ###   ########.fr       */
+/*   Updated: 2024/07/25 18:27:39 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,14 @@
 
 typedef struct s_arg
 {
-	int	num_of_philo;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	must_eat_count;
+	int				num_of_philo;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				must_eat_count;
+	int				finish;
+	long long		start_time;
+	pthread_mutex_t	print;
 }	t_arg;
 
 typedef struct s_philo
@@ -57,5 +60,6 @@ long	ft_atoi(const char *str);
 void	*philo_routine(void *arg);
 void	ft_join_thread(int num_of_philo, t_philo *philo);
 void	ft_destroy_mutex(int num_of_philo, pthread_mutex_t *fork);
-void	ft_free_philo_mutex(t_philo *philo, pthread_mutex_t *fork);
+void	ft_free_thread_mutex(int num, t_philo *philo, pthread_mutex_t *fork);
+long long	ft_get_ms(void);
 #endif
