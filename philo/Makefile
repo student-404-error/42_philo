@@ -6,13 +6,14 @@
 #    By: seong-ki <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/23 20:42:23 by seong-ki          #+#    #+#              #
-#    Updated: 2024/07/24 22:19:51 by seong-ki         ###   ########.fr        #
+#    Updated: 2024/07/25 18:23:18 by seong-ki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=		philo
 
-SRCS		=		philo.c	\
+SRCS		=		main.c	\
+					philo.c	\
 					ft_atoi.c	\
 					ft_init.c	\
 					ft_thread_mutex_utils.c	\
