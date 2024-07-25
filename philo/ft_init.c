@@ -6,7 +6,7 @@
 /*   By: seong-ki <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 20:58:11 by seong-ki          #+#    #+#             */
-/*   Updated: 2024/07/24 21:00:43 by seong-ki         ###   ########.fr       */
+/*   Updated: 2024/07/25 18:22:02 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	ft_init_arg(t_arg *arg, int ac, char **av)
 	arg->time_to_die = ft_atoi(av[2]);
 	arg->time_to_eat = ft_atoi(av[3]);
 	arg->time_to_sleep = ft_atoi(av[4]);
+	arg->start_time = ft_get_ms();
+	arg->finish = 0;
 	if (arg->num_of_philo <= 0 || arg->time_to_die <= 0
 		|| arg->time_to_eat <= 0 || arg->time_to_sleep <= 0)
 		return (ARG_ERR);
