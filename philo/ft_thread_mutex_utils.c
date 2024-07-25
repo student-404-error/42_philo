@@ -6,7 +6,7 @@
 /*   By: seong-ki <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 21:09:27 by seong-ki          #+#    #+#             */
-/*   Updated: 2024/07/24 21:09:58 by seong-ki         ###   ########.fr       */
+/*   Updated: 2024/07/25 18:27:07 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ void	ft_destroy_mutex(int num_of_philo, pthread_mutex_t *fork)
 	}
 }
 
-void	ft_free_thread_mutex(t_philo *philo, pthread_mutex_t *fork)
+void	ft_free_thread_mutex(int num, t_philo *philo, pthread_mutex_t *fork)
 {
-	ft_destroy_mutex(arg.num_of_philo, fork);
+	ft_destroy_mutex(num, fork);
 	free(fork);
 	free(philo);
 }
