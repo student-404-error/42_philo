@@ -19,7 +19,6 @@ void ft_destroy_mutex(int num_of_philo, pthread_mutex_t *forks)
 
 void ft_free_thread_mutex(int num, t_philo *philo, pthread_mutex_t *forks)
 {
-	// destroy philosopher state mutexes
 	for (int i = 0; i < num; i++)
 		pthread_mutex_destroy(&philo[i].state_mutex);
 	// destroy forks

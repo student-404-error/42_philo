@@ -22,7 +22,6 @@ int ft_init_fork(t_arg *arg, pthread_mutex_t **forks)
 	{
 		if (pthread_mutex_init(&(*forks)[i], NULL) != 0)
 		{
-			// rollback
 			for (int j = 0; j < i; j++)
 				pthread_mutex_destroy(&(*forks)[j]);
 			free(*forks);
@@ -57,11 +56,13 @@ int ft_init_arg(t_arg *arg, int ac, char **av)
 int ft_init_philo(t_arg *arg, t_philo **philo, pthread_mutex_t *forks)
 {
 	int i;
+	int j;
 
 	*philo = malloc(sizeof(t_philo) * arg->num_of_philo);
 	if (!*philo)
 		return (MALLOC_ERR);
-	for (i = 0; i < arg->num_of_philo; i++)
+	i = 0;
+	while (i < arg->num_of_philo)
 	{
 		(*philo)[i].id = i;
 		(*philo)[i].eat_count = 0;
@@ -70,12 +71,12 @@ int ft_init_philo(t_arg *arg, t_philo **philo, pthread_mutex_t *forks)
 		(*philo)[i].right_fork = &forks[(i + 1) % arg->num_of_philo];
 		if (pthread_mutex_init(&(*philo)[i].state_mutex, NULL) != 0)
 		{
-			// rollback
-			for (int j = 0; j < i; j++)
-				pthread_mutex_destroy(&(*philo)[j].state_mutex);
-			free(*philo);
-			return (PTHREAD_ERR);
+			j = 0;
+			while (j < i)
+				pthread_mutex_destroy(&(*philo)[j++].state_mutex);
+			return (free(*philo), PTHREAD_ERR);
 		}
+		i++;
 	}
 	return (SUCCESS);
 }

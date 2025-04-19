@@ -25,11 +25,12 @@ long long ft_get_ms(void)
 void ft_pass_time(long long wait_time, t_arg *arg)
 {
     long long start = ft_get_ms();
+	int done;
+
     while (1)
     {
-        // finish 플래그 읽기 시에도 락
         pthread_mutex_lock(&arg->finish_mutex);
-        int done = arg->finish;
+        done = arg->finish;
         pthread_mutex_unlock(&arg->finish_mutex);
         if (done)
             break;
