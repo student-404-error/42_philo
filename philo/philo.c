@@ -31,58 +31,74 @@ int ft_print_philo_state(t_arg *arg, t_philo *philo, char *state)
 
 void *ft_philo_routine(void *philo_ptr)
 {
-	t_philo *philo = (t_philo *)philo_ptr;
-	t_arg *arg = philo->arg;
+    t_philo *philo = (t_philo *)philo_ptr;
+    t_arg *arg = philo->arg;
 
-	if (philo->id % 2 == 0)
-		usleep(1000);
+    if (philo->id % 2 == 0)
+        usleep(1000);
 
-	while (1)
-	{
-		pthread_mutex_lock(&arg->finish_mutex);
-		if (arg->finish)
+    while (1) {
+        pthread_mutex_lock(&arg->finish_mutex);
+        if (arg->finish) {
+            pthread_mutex_unlock(&arg->finish_mutex);
+            break;
+        }
+        pthread_mutex_unlock(&arg->finish_mutex);
+
+        if (arg->num_of_philo == 1) {
+            pthread_mutex_lock(philo->left_fork);
+            ft_print_philo_state(arg, philo, "has taken a fork");
+            ft_print_philo_state(arg, philo, "died");
+            pthread_mutex_lock(&arg->finish_mutex);
+            arg->finish = 1;
+            pthread_mutex_unlock(&arg->finish_mutex);
+            pthread_mutex_unlock(philo->left_fork);
+            return (NULL);
+        }
+
+        // consistent locking order by address
+        pthread_mutex_t *first = philo->left_fork;
+        pthread_mutex_t *second = philo->right_fork;
+        if (first > second) {
+            pthread_mutex_t *tmp = first;
+            first = second;
+            second = tmp;
+        }
+        pthread_mutex_lock(first);
+        ft_print_philo_state(arg, philo, "has taken a fork");
+        pthread_mutex_lock(second);
+        ft_print_philo_state(arg, philo, "has taken a fork");
+
+        // eating
+        ft_print_philo_state(arg, philo, "is eating");
+        pthread_mutex_lock(&philo->state_mutex);
+        philo->last_eat_time = ft_get_ms();
+        philo->eat_count++;
+        pthread_mutex_unlock(&philo->state_mutex);
+        ft_pass_time(arg->time_to_eat, arg);
+
+        // put down forks
+        pthread_mutex_unlock(second);
+        pthread_mutex_unlock(first);
+		if (arg->must_eat_count > 0)
 		{
-			pthread_mutex_unlock(&arg->finish_mutex);
-			break;
-		}
-		pthread_mutex_unlock(&arg->finish_mutex);
-
-		// take left fork
-		pthread_mutex_lock(philo->left_fork);
-		ft_print_philo_state(arg, philo, "has taken a fork");
-		if (arg->num_of_philo == 1)
-		{
-			ft_print_philo_state(arg, philo, "died");
 			pthread_mutex_lock(&arg->finish_mutex);
-			arg->finish = 1;
+			if (philo->eat_count >= arg->must_eat_count)
+			{
+				arg->finished_eat++;
+				pthread_mutex_unlock(&arg->finish_mutex);
+				return NULL;
+			}
 			pthread_mutex_unlock(&arg->finish_mutex);
-			pthread_mutex_unlock(philo->left_fork);
-			return (NULL);
 		}
-		// take right fork
-		pthread_mutex_lock(philo->right_fork);
-		ft_print_philo_state(arg, philo, "has taken a fork");
+        // sleeping
+        ft_print_philo_state(arg, philo, "is sleeping");
+        ft_pass_time(arg->time_to_sleep, arg);
 
-		// eating
-		ft_print_philo_state(arg, philo, "is eating");
-		pthread_mutex_lock(&philo->state_mutex);
-		philo->last_eat_time = ft_get_ms();
-		philo->eat_count++;
-		pthread_mutex_unlock(&philo->state_mutex);
-		ft_pass_time(arg->time_to_eat, arg);
-
-		// put down forks
-		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_unlock(philo->left_fork);
-
-		// sleeping
-		ft_print_philo_state(arg, philo, "is sleeping");
-		ft_pass_time(arg->time_to_sleep, arg);
-
-		// thinking
-		ft_print_philo_state(arg, philo, "is thinking");
-	}
-	return (NULL);
+        // thinking
+        ft_print_philo_state(arg, philo, "is thinking");
+    }
+    return (NULL);
 }
 
 void ft_philo_check_finish(t_arg *arg, t_philo *philo)

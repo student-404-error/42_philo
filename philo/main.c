@@ -24,17 +24,19 @@ long long ft_get_ms(void)
 
 void ft_pass_time(long long wait_time, t_arg *arg)
 {
-	long long start;
-	long long now;
-
-	start = ft_get_ms();
-	while (!(arg->finish))
-	{
-		now = ft_get_ms();
-		if ((now - start) >= wait_time)
-			break;
-		usleep(10);
-	}
+    long long start = ft_get_ms();
+    while (1)
+    {
+        // finish 플래그 읽기 시에도 락
+        pthread_mutex_lock(&arg->finish_mutex);
+        int done = arg->finish;
+        pthread_mutex_unlock(&arg->finish_mutex);
+        if (done)
+            break;
+        if (ft_get_ms() - start >= wait_time)
+            break;
+        usleep(10);
+    }
 }
 
 int ft_errno(int errno, char *loc)
