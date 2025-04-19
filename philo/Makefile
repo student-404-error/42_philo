@@ -17,7 +17,8 @@ SRCS		=		main.c	\
 					ft_atoi.c	\
 					ft_init.c	\
 					ft_thread_mutex_utils.c	\
-					monitor.c
+					monitor.c	\
+					philo_utils.c
 
 OBJS		=		$(SRCS:.c=.o)
 
