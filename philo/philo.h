@@ -39,6 +39,7 @@ typedef struct s_arg
 	int finished_eat;
 	long long start_time;
 	pthread_mutex_t print;
+	pthread_mutex_t finish_mutex;
 } t_arg;
 
 typedef struct s_philo

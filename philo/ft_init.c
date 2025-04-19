@@ -37,6 +37,8 @@ int ft_init_arg(t_arg *arg, int ac, char **av)
 	arg->time_to_sleep = ft_atoi(av[4]);
 	arg->start_time = ft_get_ms();
 	arg->finish = 0;
+	pthread_mutex_init(&(arg->print), NULL);
+	pthread_mutex_init(&(arg->finish_mutex), NULL);
 	if (arg->num_of_philo <= 0 || arg->time_to_die <= 0 || arg->time_to_eat <= 0 || arg->time_to_sleep <= 0)
 		return (ARG_ERR);
 	if (ac == 6)
