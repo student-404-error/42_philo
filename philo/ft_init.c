@@ -55,18 +55,19 @@ int ft_init_philo(t_arg arg, t_philo **philo, pthread_mutex_t *fork)
 	int i;
 
 	*philo = malloc(sizeof(t_philo) * arg.num_of_philo);
-	if (!philo)
-		return (MALLOC_ERR);
+	if (!(*philo))
+		return (4);
 	i = 0;
 	while (i < arg.num_of_philo)
 	{
 		(*philo)[i].id = i;
-		(*philo)[i].eat_count = arg.must_eat_count;
-		(*philo)[i].last_eat_time = 0; // 0 or get_time();
+		(*philo)[i].last_eat_time = ft_get_ms();
+		(*philo)[i].eat_count = 0;
+		(*philo)[i].arg = &arg;
 		(*philo)[i].left_fork = &fork[i];
 		(*philo)[i].right_fork = &fork[(i + 1) % arg.num_of_philo];
-		(*philo)[i].arg = &arg;
+		pthread_mutex_init(&((*philo)[i].state_mutex), NULL);
 		i++;
 	}
-	return (SUCCESS);
+	return (0);
 }

@@ -51,6 +51,7 @@ typedef struct s_philo
 	pthread_mutex_t *left_fork;
 	pthread_mutex_t *right_fork;
 	t_arg *arg;
+	pthread_mutex_t state_mutex;  // 추가: 상태 보호를 위한 뮤텍스
 } t_philo;
 
 // init functions

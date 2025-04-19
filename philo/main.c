@@ -53,20 +53,22 @@ void ft_pass_time(long long wait_time, t_arg *arg)
 
 void *ft_philo_routine(t_arg *arg, t_philo *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
-	ft_print_philo_state(arg, philo, "has taken a fork");
-	if (arg->num_of_philo != 1)
-	{
-		pthread_mutex_lock(philo->right_fork);
-		ft_print_philo_state(arg, philo, "has taken a fork");
-		ft_print_philo_state(arg, philo, "is eating");
-		philo->last_eat_time = ft_get_ms();
-		philo->eat_count++;
-		ft_pass_time((long long)arg->time_to_eat, arg);
-		pthread_mutex_unlock(philo->right_fork);
-	}
-	pthread_mutex_unlock(philo->left_fork);
-	return (0);
+    pthread_mutex_lock(philo->left_fork);
+    ft_print_philo_state(arg, philo, "has taken a fork");
+    if (arg->num_of_philo != 1)
+    {
+        pthread_mutex_lock(philo->right_fork);
+        ft_print_philo_state(arg, philo, "has taken a fork");
+        ft_print_philo_state(arg, philo, "is eating");
+        pthread_mutex_lock(&(philo->state_mutex));
+        philo->last_eat_time = ft_get_ms();
+        philo->eat_count++;
+        pthread_mutex_unlock(&(philo->state_mutex));
+        ft_pass_time((long long)arg->time_to_eat, arg);
+        pthread_mutex_unlock(philo->right_fork);
+    }
+    pthread_mutex_unlock(philo->left_fork);
+    return (0);
 }
 
 int ft_errno(int errno, char *loc)
