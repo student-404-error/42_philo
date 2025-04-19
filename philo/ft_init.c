@@ -12,9 +12,9 @@
 
 #include "philo.h"
 
-int	ft_init_fork(t_arg *arg, pthread_mutex_t **fork)
+int ft_init_fork(t_arg *arg, pthread_mutex_t **fork)
 {
-	int	i;
+	int i;
 
 	*fork = malloc(sizeof(pthread_mutex_t) * arg->num_of_philo);
 	if (!(*fork))
@@ -29,7 +29,7 @@ int	ft_init_fork(t_arg *arg, pthread_mutex_t **fork)
 	return (SUCCESS);
 }
 
-int	ft_init_arg(t_arg *arg, int ac, char **av)
+int ft_init_arg(t_arg *arg, int ac, char **av)
 {
 	arg->num_of_philo = ft_atoi(av[1]);
 	arg->time_to_die = ft_atoi(av[2]);
@@ -37,8 +37,7 @@ int	ft_init_arg(t_arg *arg, int ac, char **av)
 	arg->time_to_sleep = ft_atoi(av[4]);
 	arg->start_time = ft_get_ms();
 	arg->finish = 0;
-	if (arg->num_of_philo <= 0 || arg->time_to_die <= 0
-		|| arg->time_to_eat <= 0 || arg->time_to_sleep <= 0)
+	if (arg->num_of_philo <= 0 || arg->time_to_die <= 0 || arg->time_to_eat <= 0 || arg->time_to_sleep <= 0)
 		return (ARG_ERR);
 	if (ac == 6)
 	{
@@ -49,9 +48,9 @@ int	ft_init_arg(t_arg *arg, int ac, char **av)
 	return (SUCCESS);
 }
 
-int	ft_init_philo(t_arg arg, t_philo **philo, pthread_mutex_t *fork)
+int ft_init_philo(t_arg arg, t_philo **philo, pthread_mutex_t *fork)
 {
-	int	i;
+	int i;
 
 	*philo = malloc(sizeof(t_philo) * arg.num_of_philo);
 	if (!philo)
@@ -64,7 +63,6 @@ int	ft_init_philo(t_arg arg, t_philo **philo, pthread_mutex_t *fork)
 		(*philo)[i].last_eat_time = 0; // 0 or get_time();
 		(*philo)[i].left_fork = &fork[i];
 		(*philo)[i].right_fork = &fork[(i + 1) % arg.num_of_philo];
-		pthread_create(&(*philo)[i].thread, NULL, philo_routine, &(*philo)[i]);
 		(*philo)[i].arg = &arg;
 		i++;
 	}

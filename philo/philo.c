@@ -9,79 +9,74 @@
 /*   Updated: 2024/07/25 16:23:09 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-/*
+
 #include "philo.h"
 
-pthread_mutex_t	mtx;
-
-void	*thread_body(void *arg)
+void ft_philo_check_finish(t_arg *arg, t_philo *philo)
 {
-	int	*shared_var_ptr = (int *) arg;
+	int i;
+	long long now;
 
-	// 임계 구역 잠금( 뮤텍스 잠금 )
-	pthread_mutex_lock(&mtx);
-	(*shared_var_ptr) += 1;
-	printf("%d\n", *shared_var_ptr);
-	pthread_mutex_unlock(&mtx);
-	// 임계 구역 해제 ( 뮤텍스 해제 )
-	return (NULL);
+	while (!arg->finish)
+	{
+		if ((arg->must_eat_count != 0) && (arg->num_of_philo == arg->finished_eat))
+		{
+			arg->finish = 1;
+			break;
+		}
+		i = 0;
+		while (i < arg->num_of_philo)
+		{
+			now = ft_get_ms();
+			if ((now - philo[i].last_eat_time) > arg->time_to_die)
+			{
+				arg->finish = 1;
+				ft_print_philo_state(arg, &philo[i], "died");
+				break;
+			}
+			i++;
+		}
+	}
 }
 
-void	*thread_body2(void *arg)
+void *ft_thread(void *argv)
 {
-	int	*shared_var_ptr = (int *) arg;
-
-	// 임계 구역 잠금
-	pthread_mutex_lock(&mtx);
-	(*shared_var_ptr) += 2;
-	printf("%d\n", *shared_var_ptr);
-	pthread_mutex_unlock(&mtx);
-	// 임계 구역 해제
-	return (NULL);
-}
-
-int	main(int ac, char *av[])
-{
-	(void) av;
-	(void) ac;
-	int	shared_var = 0;
-
-	struct timeval tv;
-	time_t	current_time;
-
-	gettimeofday(&tv, NULL);
-	current_time = tv.tv_sec;
-	if (ac != 5 && ac != 6)
-		printf("%d %d %d\n", tv.tv_hour, );
-
-	// thread 핸들러
-	pthread_t	thread1;
-	pthread_t	thread2;
-
-	pthread_mutex_init(&mtx, NULL);
-	
-	int	result1 = pthread_create(&thread1, NULL, thread_body, &shared_var);
-	int	result2 = pthread_create(&thread2, NULL, thread_body2, &shared_var);
-
-	if (result1 || result2)
+	t_arg *arg;
+	t_philo *philo;
+	philo = (t_philo *)argv;
+	arg = philo->arg;
+	if (philo->id % 2 == 0)
+		usleep(1000);
+	while (!(arg->finish))
 	{
-		printf("Thread could not be created.\n");
-		exit(1);
+		ft_philo_routine(arg, philo);
+		if (arg->must_eat_count == philo->eat_count)
+		{
+			arg->finished_eat++;
+			break;
+		}
+		ft_print_philo_state(arg, philo, "is sleeping");
+		ft_pass_time((long long)arg->time_to_sleep, arg);
+		ft_print_philo_state(arg, philo, "is thinking");
 	}
-	result1 = pthread_join(thread1, NULL);
-	result2 = pthread_join(thread2, NULL);
-	if (result1 || result2)
-	{
-		printf("The thread could not be detached.\n");
-		exit(2);
-	}
-	
-	result = pthread_join(thread, NULL);
-	if (result)
-	{
-		printf("The thread could not be joined. Error number: %d\n", result);
-		exit(2);
-	}
-	pthread_mutex_destroy(&mtx);
 	return (0);
-}*/
+}
+int ft_philo_start(t_arg *arg, t_philo *philo, pthread_mutex_t *fork)
+{
+	int i;
+
+	i = 0;
+	while (i < arg->num_of_philo)
+	{
+		philo[i].last_eat_time = ft_get_ms();
+		if (pthread_create(&(philo[i].thread), NULL, ft_thread, &(philo[i])))
+			return (1);
+		i++;
+	}
+	ft_philo_check_finish(arg, philo);
+	i = 0;
+	while (i < arg->num_of_philo)
+		pthread_join(philo[i++].thread, NULL);
+	ft_free_thread_mutex(arg->num_of_philo, philo, fork);
+	return (0);
+}
