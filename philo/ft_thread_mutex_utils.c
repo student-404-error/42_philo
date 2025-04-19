@@ -11,19 +11,23 @@
 /* ************************************************************************** */
 #include "philo.h"
 
-void ft_destroy_mutex(int num_of_philo, pthread_mutex_t *forks)
+void	ft_destroy_mutex(int num_of_philo, pthread_mutex_t *forks)
 {
-	for (int i = 0; i < num_of_philo; i++)
-		pthread_mutex_destroy(&forks[i]);
+	int	i;
+
+	i = 0;
+	while (i < num_of_philo)
+		pthread_mutex_destroy(&forks[i++]);
 }
 
-void ft_free_thread_mutex(int num, t_philo *philo, pthread_mutex_t *forks)
+void	ft_free_thread_mutex(int num, t_philo *philo, pthread_mutex_t *forks)
 {
-	for (int i = 0; i < num; i++)
-		pthread_mutex_destroy(&philo[i].state_mutex);
-	// destroy forks
+	int	i;
+
+	i = 0;
+	while (i < num)
+		pthread_mutex_destroy(&philo[i++].state_mutex);
 	ft_destroy_mutex(num, forks);
-	// destroy arg mutexes
 	pthread_mutex_destroy(&philo[0].arg->print);
 	pthread_mutex_destroy(&philo[0].arg->finish_mutex);
 	free(forks);

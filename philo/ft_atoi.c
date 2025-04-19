@@ -12,10 +12,10 @@
 
 #include "philo.h"
 
-long ft_atoi(const char *str)
+long	ft_atoi(const char *str)
 {
-	long n;
-	int sign;
+	long	n;
+	int		sign;
 
 	while (*str == ' ' || (*str >= 9 && *str <= 13))
 		str++;

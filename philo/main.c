@@ -13,34 +13,35 @@
 #include "philo.h"
 #include <string.h>
 
-long long ft_get_ms(void)
+long long	ft_get_ms(void)
 {
-	struct timeval tv;
+	struct timeval	tv;
 
 	if (!gettimeofday(&tv, NULL))
 		return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 	return (-1);
 }
 
-void ft_pass_time(long long wait_time, t_arg *arg)
+void	ft_pass_time(long long wait_time, t_arg *arg)
 {
-    long long start = ft_get_ms();
-	int done;
+	long long	start;
+	int			done;
 
-    while (1)
-    {
-        pthread_mutex_lock(&arg->finish_mutex);
-        done = arg->finish;
-        pthread_mutex_unlock(&arg->finish_mutex);
-        if (done)
-            break;
-        if (ft_get_ms() - start >= wait_time)
-            break;
-        usleep(10);
-    }
+	start = ft_get_ms();
+	while (1)
+	{
+		pthread_mutex_lock(&arg->finish_mutex);
+		done = arg->finish;
+		pthread_mutex_unlock(&arg->finish_mutex);
+		if (done)
+			break ;
+		if (ft_get_ms() - start >= wait_time)
+			break ;
+		usleep(10);
+	}
 }
 
-int ft_errno(int errno, char *loc)
+int	ft_errno(int errno, char *loc)
 {
 	if (errno == ARG_ERR)
 		printf("Invalid Argument: %s\n", loc);
@@ -53,12 +54,12 @@ int ft_errno(int errno, char *loc)
 	return (errno);
 }
 
-int main(int ac, char *av[])
+int	main(int ac, char *av[])
 {
-	t_arg arg;
-	t_philo *philo;
-	pthread_mutex_t *forks;
-	int err;
+	pthread_mutex_t	*forks;
+	t_arg			arg;
+	t_philo			*philo;
+	int				err;
 
 	if (ac != 5 && ac != 6)
 		return (ft_errno(ARG_ERR, "input"));
