@@ -6,7 +6,7 @@
 /*   By: seong-ki <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 19:28:15 by seong-ki          #+#    #+#             */
-/*   Updated: 2024/07/25 16:23:09 by seong-ki         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:40:40 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,20 @@ static void	eat_cycle(t_arg *arg, t_philo *ph)
 {
 	pthread_mutex_t	*first;
 	pthread_mutex_t	*second;
-	pthread_mutex_t	*t;
 
-	first = ph->left_fork;
-	second = ph->right_fork;
-	if (first > second)
+	if (ph->left_fork < ph->right_fork)
 	{
-		t = first;
-		first = second;
-		second = t;
+		first = ph->left_fork;
+		second = ph->right_fork;
+	}
+	else
+	{
+		first = ph->right_fork;
+		second = ph->left_fork;
 	}
 	pthread_mutex_lock(first);
-	ft_print_philo_state(arg, ph, "has taken a fork");
 	pthread_mutex_lock(second);
+	ft_print_philo_state(arg, ph, "has taken a fork");
 	ft_print_philo_state(arg, ph, "has taken a fork");
 	ft_print_philo_state(arg, ph, "is eating");
 	pthread_mutex_lock(&ph->state_mutex);
@@ -53,7 +54,12 @@ static void	eat_cycle(t_arg *arg, t_philo *ph)
 
 static int	check_must(t_arg *arg, t_philo *ph)
 {
-	if (arg->must_eat_count > 0 && ph->eat_count >= arg->must_eat_count)
+	int	cnt;
+
+	pthread_mutex_lock(&ph->state_mutex);
+	cnt = ph->eat_count;
+	pthread_mutex_unlock(&ph->state_mutex);
+	if (arg->must_eat_count > 0 && cnt >= arg->must_eat_count)
 	{
 		pthread_mutex_lock(&arg->finish_mutex);
 		arg->finished_eat++;
@@ -82,8 +88,7 @@ void	*ft_philo_routine(void *ptr)
 
 	ph = ptr;
 	arg = ph->arg;
-	if (ph->id % 2 == 0)
-		usleep(1000);
+	usleep((ph->id + 1) * (arg->time_to_sleep / arg->num_of_philo));
 	while (!check_finish(arg))
 	{
 		if (arg->num_of_philo == 1)

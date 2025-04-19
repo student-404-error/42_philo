@@ -37,7 +37,7 @@ void	ft_pass_time(long long wait_time, t_arg *arg)
 			break ;
 		if (ft_get_ms() - start >= wait_time)
 			break ;
-		usleep(10);
+	//	usleep(10);
 	}
 }
 

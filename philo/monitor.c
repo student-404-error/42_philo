@@ -6,7 +6,7 @@
 /*   By: seong-ki <seong-ki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 15:55:12 by seong-ki          #+#    #+#             */
-/*   Updated: 2025/04/19 15:55:14 by seong-ki         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:10:23 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ static int	all_done(t_arg *arg)
 	return (0);
 }
 
-static int	check_death(t_arg *arg, t_philo *ps, int idx)
+static int	check_death(t_arg *arg, t_philo *ps, int idx, long long now)
 {
-	long long	now;
 	int			died;
+	long long	last_eat;
 
 	pthread_mutex_lock(&ps[idx].state_mutex);
-	now = ft_get_ms();
-	died = (now - ps[idx].last_eat_time > arg->time_to_die);
+	last_eat = ps[idx].last_eat_time;
 	pthread_mutex_unlock(&ps[idx].state_mutex);
+	died = (now - last_eat > arg->time_to_die);
 	if (died)
 	{
 		ft_print_philo_state(arg, &ps[idx], "died");
@@ -47,7 +47,8 @@ static int	check_death(t_arg *arg, t_philo *ps, int idx)
 
 void	ft_philo_check_finish(t_arg *arg, t_philo *ph)
 {
-	int	i;
+	int			i;
+	long long	now;
 
 	while (1)
 	{
@@ -58,12 +59,13 @@ void	ft_philo_check_finish(t_arg *arg, t_philo *ph)
 			break ;
 		}
 		pthread_mutex_unlock(&arg->finish_mutex);
-		if (all_done(arg))
-			break ;
+		now = ft_get_ms();
 		i = 0;
 		while (i < arg->num_of_philo)
-			if (check_death(arg, ph, i++))
+			if (check_death(arg, ph, i++, now))
 				return ;
-		usleep(500);
+		if (arg->must_eat_count > 0)
+			if (all_done(arg))
+				break ;
 	}
 }

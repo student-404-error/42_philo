@@ -6,7 +6,7 @@
 /*   By: seong-ki <seong-ki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 15:57:09 by seong-ki          #+#    #+#             */
-/*   Updated: 2025/04/19 15:57:09 by seong-ki         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:09:02 by seong-ki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,14 @@ int	ft_philo_start(t_arg *arg, t_philo *philo, pthread_mutex_t *forks)
 	i = 0;
 	while (i < arg->num_of_philo)
 	{
+		pthread_mutex_lock(&philo[i].state_mutex);
 		philo[i].last_eat_time = arg->start_time;
+		pthread_mutex_unlock(&philo[i].state_mutex);
 		if (pthread_create(&philo[i].thread, NULL,
 				(void *)ft_philo_routine, &philo[i]) != 0)
 			return (PTHREAD_ERR);
 		i++;
 	}
-	usleep(100);
 	ft_philo_check_finish(arg, philo);
 	i = 0;
 	while (i < arg->num_of_philo)
