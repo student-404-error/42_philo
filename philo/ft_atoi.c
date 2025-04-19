@@ -10,10 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-long	ft_atoi(const char *str)
+#include "philo.h"
+
+long ft_atoi(const char *str)
 {
-	long	n;
-	int		sign;
+	long n;
+	int sign;
 
 	while (*str == ' ' || (*str >= 9 && *str <= 13))
 		str++;
@@ -25,9 +27,9 @@ long	ft_atoi(const char *str)
 		str++;
 	}
 	n = 0;
-	while (*str >= 48 && *str <= 57)
+	while (*str >= '0' && *str <= '9')
 	{
-		n = n * 10 + (*str - 48);
+		n = n * 10 + (*str - '0');
 		str++;
 	}
 	return (n * sign);
